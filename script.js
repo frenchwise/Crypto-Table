@@ -20,13 +20,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			rank: crypto.rank,
 			symbol: crypto.symbol,
 			website: crypto.explorer,
-			priceUSD: crypto.priceUsd < 0.01 ? parseFloat(crypto.priceUsd) : parseFloat(crypto.priceUsd).toFixed(2),//awkward solution for Shiba helper function would be cleaner
-			priceGBP: crypto.priceUsd < 0.01 ? (crypto.priceUsd * conversionRates.GBP) : (crypto.priceUsd * conversionRates.GBP).toFixed(2),
-			priceEUR: crypto.priceUsd < 0.01 ? (crypto.priceUsd * conversionRates.EUR) : (crypto.priceUsd * conversionRates.EUR).toFixed(2),
-			priceAED: crypto.priceUsd < 0.01 ? (crypto.priceUsd * conversionRates.AED) : (crypto.priceUsd * conversionRates.AED).toFixed(2),
+			priceUSD: parseFloat(crypto.priceUsd),
+			priceGBP: (crypto.priceUsd * conversionRates.GBP),
+			priceEUR: (crypto.priceUsd * conversionRates.EUR),
+			priceAED: (crypto.priceUsd * conversionRates.AED),
 		}));
 	
 		renderTable(top25);
+	}
+
+	function formatCurrency(amount, currency) {
+		return new Intl.NumberFormat("en-US", {
+			style: "currency",
+			currency: currency,
+			minimumFractionDigits: 2,
+			maximumFractionDigits: amount < 0.01 ? 10: 2,//extra digits for Shiba
+		}).format(amount);
 	}
   
 	// Render the table
@@ -34,15 +43,21 @@ document.addEventListener("DOMContentLoaded", () => {
 		cryptoResults.innerHTML = "";
 		data.forEach((crypto) => {
 			const row = document.createElement("tr");
+
+			const priceUSDFormatted = formatCurrency(crypto.priceUSD, 'USD');
+			const priceGBPFormatted = formatCurrency(crypto.priceGBP, 'GBP');
+			const priceEURFormatted = formatCurrency(crypto.priceEUR, 'EUR');
+			const priceAEDFormatted = formatCurrency(crypto.priceAED, 'AED');
+
 			row.innerHTML = `
 			<td>${crypto.id}</td>
 			<td>${crypto.rank}</td>
 			<td>${crypto.symbol}</td>
 			<td><a href="${crypto.website}" target="_blank">${crypto.website}</a></td>
-			<td>${crypto.priceUSD}</td>
-			<td>${crypto.priceGBP}</td>
-			<td>${crypto.priceEUR}</td>
-			<td>${crypto.priceAED}</td>
+			<td data-price="${crypto.priceUSD}">${priceUSDFormatted}</td>
+			<td data-price="${crypto.priceGBP}">${priceGBPFormatted}</td>
+			<td data-price="${crypto.priceEUR}">${priceEURFormatted}</td>
+			<td data-price="${crypto.priceAED}">${priceAEDFormatted}</td>
 			`;
 
 			cryptoResults.appendChild(row);
@@ -53,8 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	function sortTable(column, order) {
 		const rows = Array.from(cryptoResults.querySelectorAll("tr"));
 		const sortedRows = rows.sort((a, b) => {
-			const aText = a.querySelector(`td:nth-child(${column})`).innerText;
-			const bText = b.querySelector(`td:nth-child(${column})`).innerText;
+			const aText = a.querySelector(`td:nth-child(${column})`).dataset.price || a.querySelector(`td:nth-child(${column})`).innerText;
+			const bText = b.querySelector(`td:nth-child(${column})`).dataset.price || b.querySelector(`td:nth-child(${column})`).innerText;
 	
 			const aValue = isNaN(aText) ? aText : parseFloat(aText);
 			const bValue = isNaN(bText) ? bText : parseFloat(bText);
