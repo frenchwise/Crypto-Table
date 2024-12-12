@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Crypto Currency Table</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<header>
+		<h1>Top 25 Crypto Currencies</h1>
+	</header>
+	<main>
+		<table id="cryptoTable">
+			<thead>
+				<tr>
+					<th data-column="id" data-order="">ID</th>
+					<th data-column="rank" data-order="asc" class="sort-asc">Rank</th>
+					<th data-column="symbol" data-order="">Symbol</th>
+					<th data-column="website" data-order="">Website</th>
+					<th data-column="priceUSD" data-order="">Price (USD)</th>
+					<th data-column="priceGBP" data-order="">Price (GBP)</th>
+					<th data-column="priceEUR" data-order="">Price (EUR)</th>
+					<th data-column="priceAED" data-order="">Price (AED)</th>
+				</tr>
+			</thead>
+			<tbody id="cryptoResults">
+				<!-- Added from fetch -->
+			</tbody>
+		</table>
+	</main>
+	<script src="script.js"></script>
+</body>
+</html>
